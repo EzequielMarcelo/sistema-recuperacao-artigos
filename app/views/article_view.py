@@ -1,13 +1,13 @@
-class MainView:
+class ArticleView:
     @staticmethod
     def display_menu():
         message = '''
             ---- SISTEMA RECUPERAÇÃO DE ARTIGOS CIENTÍFICOS ----
 
-            1 – Cadastrar Novo Usuário
-            2 – Recuperar Senha
-            3 – Login
-            4 – Sair
+            1 – Realizar busca ARXIV
+            2 – Realizar busca coleção de Artigos
+            3 – Listar Artigos
+            4 – Voltar ao Menu principal
         '''
 
         print(message)  
@@ -20,9 +20,3 @@ class MainView:
     @staticmethod
     def display_message(message):
         print(message)
-    
-    @staticmethod
-    def get_user_login_info():
-        CPF = input("Digite seu CPF: ")
-        password = input("Digite a sua senha: ")
-        return CPF, password
