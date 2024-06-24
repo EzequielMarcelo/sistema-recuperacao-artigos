@@ -1,4 +1,4 @@
-class MainView:
+class UserView:
     @staticmethod
     def display_menu():
         message = '''

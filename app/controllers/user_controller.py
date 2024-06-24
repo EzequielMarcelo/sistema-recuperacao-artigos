@@ -1,9 +1,9 @@
-from app.views.main_view import MainView
+from app.views.user_view import UserView
 from app.controllers.article_controller import ArticleController
 
-class MainController:
+class UserController:
     def __init__(self):
-        self.view = MainView()
+        self.view = UserView()
         self.article_controller = ArticleController()
     
     def display_menu(self):

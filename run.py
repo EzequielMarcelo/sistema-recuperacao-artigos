@@ -1,20 +1,20 @@
-from app.controllers.main_controller import MainController
+from app.controllers.user_controller import UserController
 
 def main():
-    mainController = MainController()
+    userController = UserController()
     while True:
-        mainController.display_menu()
-        choice = mainController.get_user_choice()
+        userController.display_menu()
+        choice = userController.get_user_choice()
         if choice == "1":
-            mainController.register_user()
+            userController.register_user()
         elif choice == "2":
-            mainController.recover_password()
+            userController.recover_password()
         elif choice == "3":
-            mainController.login_user()         
+            userController.login_user()         
         elif choice == "4":
             break               # ends the program
         else:
-            mainController.display_message("Escolha Inválida")
+            userController.display_message("Escolha Inválida")
 
 if __name__ == "__main__":
     main()   
