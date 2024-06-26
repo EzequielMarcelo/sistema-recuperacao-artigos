@@ -24,6 +24,16 @@ class Database:
                             email TEXT,
                             address TEXT,
                             password TEXT)''')
+        
+        cursor.execute('''CREATE TABLE IF NOT EXISTS Article (
+                            id TEXT PRIMARY KEY,
+                            title TEXT NOT NULL,
+                            summary TEXT NOT NULL,
+                            link TEXT NOT NULL,
+                            user_cpf VARCHAR(14) NOT NULL,
+                            query TEXT NOT NULL,
+                            FOREIGN KEY (user_cpf) REFERENCES User (cpf))''')
+        
         connection.commit()
         connection.close()
     
