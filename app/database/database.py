@@ -27,7 +27,7 @@ class Database:
         connection.commit()
         connection.close()
     
-    def add_user(self, user):
+    def add_user(self, user: User):
             connection = sqlite3.connect(self.data_base_path)
             cursor = connection.cursor()
             cursor.execute('''INSERT INTO User (cpf, name, age, email, address, password)
