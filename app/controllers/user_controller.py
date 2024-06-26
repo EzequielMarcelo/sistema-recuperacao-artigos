@@ -42,15 +42,29 @@ class UserController:
         self.view.display_message("Voce escolheu a opcao 2")
 
     def login_validate(self, CPF, password):
-        return True
+        valid_cpf = False
+        valid_password = False
+        user = self.database.search_user(CPF)
+           
+        if user is not None:
+            valid_cpf = True
+            print(user.password)
+            if user.password == password:
+                valid_password = True
+
+        return valid_cpf, valid_password
     
     def login_user(self):
         CPF, password = self.view.get_user_login_info()
-        is_validate = self.login_validate(CPF, password)
-       
-        if not is_validate:
-            self.view.display_message('Senha ou CPF inválidos')
+        valid_cpf, valid_password = self.login_validate(CPF, password)
+
+        if not valid_cpf and not valid_password:
+            self.view.display_message('Usuario nao encontrado')
             return
+        
+        if not valid_password:
+            self.view.display_message('Senha inválida')
+            return             
         
         while True:
                 self.article_controller.display_menu()
