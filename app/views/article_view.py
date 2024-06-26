@@ -20,3 +20,13 @@ class ArticleView:
     @staticmethod
     def display_message(message):
         print(message)
+    
+    @staticmethod
+    def display_message(message):
+        print(message)
+
+    @staticmethod
+    def get_search_parameters():
+        query = input('Digite a busca: ')
+        max_results = int(input('Insira o numero maximo para a busca: '))
+        return query, max_results

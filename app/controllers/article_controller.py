@@ -12,3 +12,8 @@ class ArticleController:
     
     def display_message(self, message):
         self.view.display_message(message)
+
+    def arxiv_search(self):
+        query, max_results = self.view.get_search_parameters()
+        
+
