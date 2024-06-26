@@ -1,3 +1,5 @@
+from app.models.user_model import User
+
 class UserView:
     @staticmethod
     def display_menu():
@@ -26,3 +28,14 @@ class UserView:
         CPF = input("Digite seu CPF: ")
         password = input("Digite a sua senha: ")
         return CPF, password
+    
+    @staticmethod
+    def get_user_info():
+        cpf = input("Insira seu CPF: ")
+        name = input("Insira seu nome: ")
+        age = int(input("Insira a sua idade: "))
+        email = input("Insira seu e-mail: ")
+        address = input("Insira seu endereço: ")
+        password = input("Insira uma nova senha: ")
+        return User(cpf, name, age, email, address, password)
+        

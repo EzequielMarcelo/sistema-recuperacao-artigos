@@ -16,8 +16,8 @@ class UserController:
         self.view.display_message(message)
 
         
-    def register_user(self):
-        self.view.display_message("Voce escolheu a opcao 1")
+    def register_user(self, data_base):
+        data_base.add_user(self.view.get_user_info())
 
     def recover_password(self):
         self.view.display_message("Voce escolheu a opcao 2")
