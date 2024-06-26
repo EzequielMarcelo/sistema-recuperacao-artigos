@@ -48,7 +48,6 @@ class UserController:
            
         if user is not None:
             valid_cpf = True
-            print(user.password)
             if user.password == password:
                 valid_password = True
 
