@@ -1,5 +1,8 @@
 from app.views.user_view import UserView
 from app.controllers.article_controller import ArticleController
+from app.database.database import Database
+from app.models.user_model import User
+import requests
 
 class UserController:
     def __init__(self):
@@ -14,10 +17,25 @@ class UserController:
     
     def display_message(self, message):
         self.view.display_message(message)
-
         
-    def register_user(self, data_base):
-        data_base.add_user(self.view.get_user_info())
+    def register_user(self, data_base:Database):
+        cpf, name, age, email, cep, password = self.view.get_user_info()
+        address = self.get_user_address(cep)
+        
+        if address is None:
+            address = self.view.get_user_address_manually(cep)
+        
+        user = User(cpf, name, age, email, address, password)
+        data_base.add_user(user)
+
+    def get_user_address(self, cep):
+            response = requests.get(f"https://viacep.com.br/ws/{cep}/json/")
+            if response.status_code == 200:
+                data = response.json()
+                if "erro" not in data:
+                    address = f"{data['logradouro']}, {data['bairro']}, {data['localidade']}, {data['uf']}, {data['cep']}"
+                    return address
+            return None
 
     def recover_password(self):
         self.view.display_message("Voce escolheu a opcao 2")
@@ -25,7 +43,7 @@ class UserController:
     def login_validate(self, CPF, password):
         return True
     
-    def login_user(self):
+    def login_user(self, data_base):
         CPF, password = self.view.get_user_login_info()
         is_validate = self.login_validate(CPF, password)
        
