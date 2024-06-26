@@ -5,7 +5,8 @@ from app.models.user_model import User
 import requests
 
 class UserController:
-    def __init__(self):
+    def __init__(self, database:Database):
+        self.database = database 
         self.view = UserView()
         self.article_controller = ArticleController()
     
@@ -18,7 +19,7 @@ class UserController:
     def display_message(self, message):
         self.view.display_message(message)
         
-    def register_user(self, data_base:Database):
+    def register_user(self):
         cpf, name, age, email, cep, password = self.view.get_user_info()
         address = self.get_user_address(cep)
         
@@ -26,7 +27,7 @@ class UserController:
             address = self.view.get_user_address_manually(cep)
         
         user = User(cpf, name, age, email, address, password)
-        data_base.add_user(user)
+        self.database.add_user(user)
 
     def get_user_address(self, cep):
             response = requests.get(f"https://viacep.com.br/ws/{cep}/json/")
@@ -43,7 +44,7 @@ class UserController:
     def login_validate(self, CPF, password):
         return True
     
-    def login_user(self, data_base):
+    def login_user(self):
         CPF, password = self.view.get_user_login_info()
         is_validate = self.login_validate(CPF, password)
        
