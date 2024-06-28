@@ -8,7 +8,7 @@ class UserController:
     def __init__(self, database:Database):
         self.database = database 
         self.view = UserView()
-        self.article_controller = ArticleController()
+        self.article_controller = ArticleController(database)
     
     def display_menu(self):
         self.view.display_menu()
@@ -51,11 +51,11 @@ class UserController:
             if user.password == password:
                 valid_password = True
 
-        return valid_cpf, valid_password
+        return valid_cpf, valid_password, user
     
     def login_user(self):
         CPF, password = self.view.get_user_login_info()
-        valid_cpf, valid_password = self.login_validate(CPF, password)
+        valid_cpf, valid_password, current_user = self.login_validate(CPF, password)
 
         if not valid_cpf and not valid_password:
             self.view.display_message('Usuario nao encontrado')
@@ -63,7 +63,9 @@ class UserController:
         
         if not valid_password:
             self.view.display_message('Senha inválida')
-            return             
+            return 
+
+        self.article_controller.set_current_user(current_user)          
         
         while True:
                 self.article_controller.display_menu()

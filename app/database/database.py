@@ -68,5 +68,20 @@ class Database:
             return user_model
         else:
             return None
+        
+    def add_article(self, article_data):
+        connection = sqlite3.connect(self.data_base_path)
+        cursor = connection.cursor()  
+
+        cursor.execute('SELECT 1 FROM Article WHERE id = ?', (article_data[0],))
+        
+        if not cursor.fetchone():
+            cursor.execute('''
+                INSERT INTO Article (id, title, summary, link, user_cpf, query)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', article_data)
+
+        connection.commit()
+        connection.close()   
          
          
