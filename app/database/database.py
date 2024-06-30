@@ -107,7 +107,6 @@ class ChromaDB:
         print(f"Vectorizer trained with {len(documents)} documents.")
 
     def index_document(self, collection, doc_id, summary):
-       
         try:
             if self.vectorizer is None:
                 raise ValueError("Vectorizer is not trained.")
@@ -129,14 +128,16 @@ class ChromaDB:
             print(f"Error when indexing document: {e}")
             return False
 
-    def search_documents(collection, query):
+    def search_documents(self, collection, query, max_results):
         try:
+            query_vector = self.vectorizer.transform([query]).toarray().tolist()
+            
             results = collection.query(
-                query_texts=[query],  
-                n_results=10  
+                query_embeddings=query_vector,
+                n_results=max_results  
             )
             return results
         except Exception as e:
             print(f"Error searching for documents: {e}")
-            return None 
+            return None
          

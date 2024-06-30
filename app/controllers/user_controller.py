@@ -73,7 +73,7 @@ class UserController:
                 if choice == "1":
                     self.article_controller.arxiv_search()
                 elif choice == "2":
-                    self.article_controller.display_message("BUSCA COLEÇÃO ARTIGOS")
+                    self.article_controller.browse_article_collection()
                 elif choice == "3":
                     self.article_controller.display_message("LISTAR ARTIGOS")
                 elif choice == "4":

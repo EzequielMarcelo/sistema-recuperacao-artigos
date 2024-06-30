@@ -36,5 +36,19 @@ class ArticleController:
                 article_data = (article['id'], article['title'], article['summary'], article['link'], cpf, query)
                 self.database.add_article(article_data)
                 self.chromadb.index_document(collection, article['id'], article['summary'])
+
+    def browse_article_collection(self):
+        cpf = self.current_user.cpf
+        query, max_results = self.view.get_search_parameters()
+        collection = self.chromadb.connect_to_collection(cpf)
+        
+        results = self.chromadb.search_documents(collection, query, max_results)
+        
+        if results:
+            total_articles = len(results['ids'][0])
+            self.view.display_message(f"Total items recovered: {total_articles}")
+            for id in results['ids'][0]:
+                print(f"Article ID: {id}")
+
         
 
