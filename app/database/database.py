@@ -90,7 +90,8 @@ class ChromaDB:
     def __init__(self, storage_path):
         self.storage_path = storage_path
         self.client = chromadb.PersistentClient(path=storage_path)
-        self.vectorizer = TfidfVectorizer(max_features=10)
+        self.vectorizer_max_features = 200
+        self.vectorizer = TfidfVectorizer(max_features=self.vectorizer_max_features)
 
     def connect_to_collection(self, cpf):
         collection_name = f"colect_{cpf}"
@@ -98,34 +99,44 @@ class ChromaDB:
             collection = self.client.get_or_create_collection(name=collection_name)
             return collection
         except Exception as e:
-            # debug print(f"Error connecting to collection {collection_name}: {e}")       
+            print(f"Error connecting to collection {collection_name}: {e}")       
             return None
+        
+    def train_vectorizer(self, documents):
+        self.vectorizer.fit(documents)
+        print(f"Vectorizer trained with {len(documents)} documents.")
 
     def index_document(self, collection, doc_id, summary):
+       
         try:
-            summary_vector = self.vectorizer.fit_transform([summary])
-            embeddings = summary_vector.toarray().tolist()
-
+            if self.vectorizer is None:
+                raise ValueError("Vectorizer is not trained.")
+                
+            summary_vector = self.vectorizer.transform([summary])
+            embeddings = summary_vector.toarray().tolist()[0] 
+            if len(embeddings) < self.vectorizer_max_features:
+                embeddings.extend([0] * (self.vectorizer_max_features - len(embeddings)))
+            else:
+                embeddings = embeddings[:self.vectorizer_max_features]
+                
             collection.upsert(
                 ids=[doc_id],
-                embeddings=embeddings
+                embeddings=[embeddings]
             )
-            # debug print(f"Document '{doc_id}' successfuly indexed in the collection.")
+            print(f"Document '{doc_id}' successfully indexed in the collection.")
             return True
         except Exception as e:
-            # debug print(f"Error when idexing document: {e}")
+            print(f"Error when indexing document: {e}")
             return False
 
-    def search_documents(self, collection, query):
+    def search_documents(collection, query):
         try:
-            query_vector = self.vectorizer.transform([query])
-            query_embeddings = query_vector.toarray().tolist()
-
             results = collection.query(
-                query_embeddings=query_embeddings,
+                query_texts=[query],  
+                n_results=10  
             )
             return results
         except Exception as e:
-            # debugprint(f"Error searching for documents: {e}")
-            return None         
+            print(f"Error searching for documents: {e}")
+            return None 
          

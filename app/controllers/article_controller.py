@@ -29,6 +29,9 @@ class ArticleController:
         collection = self.chromadb.connect_to_collection(cpf)
         
         if articles_xml and collection:
+            summaries = [article['summary'] for article in parsed_articles]
+            self.chromadb.train_vectorizer(summaries) 
+            
             for article in parsed_articles:
                 article_data = (article['id'], article['title'], article['summary'], article['link'], cpf, query)
                 self.database.add_article(article_data)
