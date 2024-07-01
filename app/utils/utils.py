@@ -7,12 +7,24 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
+import requests
 
 load_dotenv(dotenv_path='venv/.env')
 
 EMAIL = os.getenv('EMAIL')
 SENHA = os.getenv('SENHA')
 
+class CEP:
+    @staticmethod
+    def get_address_by_cep(cep):
+            response = requests.get(f"https://viacep.com.br/ws/{cep}/json/")
+            if response.status_code == 200:
+                data = response.json()
+                if "erro" not in data:
+                    address = f"{data['logradouro']}, {data['bairro']}, {data['localidade']}, {data['uf']}, {data['cep']}"
+                    return address
+            return None
+    
 class CSV:
     def __init__(self, directory):
         self.directory = directory

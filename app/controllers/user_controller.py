@@ -2,8 +2,7 @@ from app.views.user_view import UserView
 from app.controllers.article_controller import ArticleController
 from app.database.database import Database
 from app.models.user_model import User
-from app.utils.utils import Email
-import requests
+from app.utils.utils import Email, CEP
 
 class UserController:
     def __init__(self, database:Database):
@@ -22,22 +21,13 @@ class UserController:
         
     def register_user(self):
         cpf, name, age, email, cep, password = self.view.get_user_info()
-        address = self.get_user_address(cep)
+        address = CEP.get_address_by_cep(cep)
         
         if address is None:
             address = self.view.get_user_address_manually(cep)
         
         user = User(cpf, name, age, email, address, password)
         self.database.add_user(user)
-
-    def get_user_address(self, cep):
-            response = requests.get(f"https://viacep.com.br/ws/{cep}/json/")
-            if response.status_code == 200:
-                data = response.json()
-                if "erro" not in data:
-                    address = f"{data['logradouro']}, {data['bairro']}, {data['localidade']}, {data['uf']}, {data['cep']}"
-                    return address
-            return None
 
     def recover_password(self):
         email = self.view.get_info_recover_password()
