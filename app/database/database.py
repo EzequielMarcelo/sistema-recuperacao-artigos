@@ -71,6 +71,35 @@ class Database:
         else:
             return None
         
+    def search_user_by_email(self, email):
+        connection = sqlite3.connect(self.data_base_path)
+        cursor = connection.cursor()        
+       
+        cursor.execute("SELECT * FROM User WHERE email = ?", (email,))
+        user = cursor.fetchone()
+        
+        connection.close()
+        
+        if user:
+            user_model = User(
+                user[0],
+                user[1],
+                user[2],
+                user[3],
+                user[4],
+                user[5]
+            )
+            return user_model
+        else:
+            return None
+        
+    def update_password(self, cpf, new_password):
+        connection = sqlite3.connect(self.data_base_path)
+        cursor = connection.cursor()
+        cursor.execute('''UPDATE User SET password = ? WHERE cpf = ?''', (new_password, cpf))
+        connection.commit()
+        connection.close()
+
     def add_article(self, article_data):
         connection = sqlite3.connect(self.data_base_path)
         cursor = connection.cursor()  

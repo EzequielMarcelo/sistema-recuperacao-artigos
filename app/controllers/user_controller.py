@@ -2,6 +2,7 @@ from app.views.user_view import UserView
 from app.controllers.article_controller import ArticleController
 from app.database.database import Database
 from app.models.user_model import User
+from app.utils.utils import Email
 import requests
 
 class UserController:
@@ -39,7 +40,15 @@ class UserController:
             return None
 
     def recover_password(self):
-        self.view.display_message("Voce escolheu a opcao 2")
+        email = self.view.get_info_recover_password()
+        user = self.database.search_user_by_email(email)
+        if user:
+            new_pass = Email.random_password()
+            self.database.update_password(user.cpf, new_pass)
+            message = f"Oi {user.name}, sua nova senha é {new_pass}."
+            Email.send_email(email, "Recuperação de Senha", message)
+        else:
+            print("E-mail não cadastrado.")
 
     def login_validate(self, CPF, password):
         valid_cpf = False

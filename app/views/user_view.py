@@ -46,4 +46,9 @@ class UserView:
         state = input("Digite a sigla do estado: ")
         full_address = f"{patio}, {neighborhood}, {cep}, {city}, {state}"
         return full_address
+    
+    @staticmethod
+    def get_info_recover_password():
+        email = input("Digite o e-mail cadastrado: ")
+        return email
         
