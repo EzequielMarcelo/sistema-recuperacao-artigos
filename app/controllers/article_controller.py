@@ -50,16 +50,34 @@ class ArticleController:
 
         if results:
             total_articles = len(results['ids'][0])
-            self.view.display_message(f"Total de artigos recuperados: {total_articles}")
             for id in results['ids'][0]:
                 article = self.database.get_article_by_id(id)
                 retrieved_articles.append(article)
                 self.view.display_article(article)
+            
+            self.view.display_message(f"Total de artigos recuperados: {total_articles}")
         
         export = self.view.get_csv_export()
         
         if export:
             self.csv.export_articles_to_csv(retrieved_articles)
+
+    def display_all_articles(self):
+        retrieved_articles = self.database.get_all_articles_by_cpf(self.current_user.cpf)
+
+        if retrieved_articles:
+            total_articles = len(retrieved_articles)
+            
+            for article in retrieved_articles:
+                self.view.display_article(article)
+            
+            self.view.display_message(f"Total de artigos recuperados: {total_articles}")
+
+        export = self.view.get_csv_export()
+        
+        if export:
+            self.csv.export_articles_to_csv(retrieved_articles)
+
 
         
 

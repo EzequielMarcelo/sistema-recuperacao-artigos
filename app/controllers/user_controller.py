@@ -75,7 +75,7 @@ class UserController:
                 elif choice == "2":
                     self.article_controller.browse_article_collection()
                 elif choice == "3":
-                    self.article_controller.display_message("LISTAR ARTIGOS")
+                    self.article_controller.display_all_articles()
                 elif choice == "4":
                     break
                 else:

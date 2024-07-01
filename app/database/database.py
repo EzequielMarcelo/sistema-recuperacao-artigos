@@ -107,6 +107,17 @@ class Database:
             }
         else:
             return None
+        
+    def get_all_articles_by_cpf(self, cpf):
+        connection = sqlite3.connect(self.data_base_path)
+        cursor = connection.cursor()
+
+        cursor.execute('SELECT * FROM Article WHERE user_cpf = ?', (cpf,))
+        articles = cursor.fetchall()
+
+        connection.close()
+
+        return [{'id': id, 'title': title, 'summary': summary, 'link': link, 'user_cpf': user_cpf, 'query': query} for (id, title, summary, link, user_cpf, query) in articles]
 
 class ChromaDB:
     def __init__(self, storage_path):
