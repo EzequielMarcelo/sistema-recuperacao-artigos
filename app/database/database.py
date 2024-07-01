@@ -86,6 +86,28 @@ class Database:
         connection.commit()
         connection.close()  
 
+    def get_article_by_id(self, article_id):
+        connection = sqlite3.connect(self.data_base_path)
+        cursor = connection.cursor()
+
+        cursor.execute('SELECT * FROM Article WHERE id = ?', (article_id,))
+        article = cursor.fetchone()
+
+        connection.close()
+
+        if article:
+            id, title, summary, link, user_cpf, query = article
+            return {
+                'id': id,
+                'title': title,
+                'summary': summary,
+                'link': link,
+                'user_cpf': user_cpf,
+                'query': query
+            }
+        else:
+            return None
+
 class ChromaDB:
     def __init__(self, storage_path):
         self.storage_path = storage_path

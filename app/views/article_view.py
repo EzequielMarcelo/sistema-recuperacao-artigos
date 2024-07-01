@@ -22,11 +22,24 @@ class ArticleView:
         print(message)
     
     @staticmethod
-    def display_message(message):
-        print(message)
+    def display_article(article):
+        print("\n==== ID ====")
+        print(f"{article['id']}")
+        print("==== Titulo ====")
+        print(f"{article['title']}")
+        print("==== Resumo ====")
+        print(f"{article['summary']}")
+        print("==== Link ====")
+        print(f"{article['id']}\n")
 
     @staticmethod
     def get_search_parameters():
         query = input('Digite a busca: ')
         max_results = int(input('Insira o numero maximo para a busca: '))
         return query, max_results
+    
+    @staticmethod
+    def get_csv_export():
+        choice = input('Deseja exportar os dados em CSV? S/N: ')
+        success = choice.upper() == 'S'
+        return success

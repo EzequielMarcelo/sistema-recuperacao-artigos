@@ -2,11 +2,13 @@ from app.views.article_view import ArticleView
 from app.models.article_model import Article
 from app.models.user_model import User
 from app.database.database import Database, ChromaDB
+from app.utils.utils import CSV
 
 class ArticleController:
     def __init__(self, database:Database):
         self.database = database
         self.chromadb = ChromaDB('venv/Database/colecoes_artigos')
+        self.csv = CSV('venv/Database')
         self.view = ArticleView()
     
     def display_menu(self):
@@ -44,11 +46,20 @@ class ArticleController:
         
         results = self.chromadb.search_documents(collection, query, max_results)
         
+        retrieved_articles = []
+
         if results:
             total_articles = len(results['ids'][0])
-            self.view.display_message(f"Total items recovered: {total_articles}")
+            self.view.display_message(f"Total de artigos recuperados: {total_articles}")
             for id in results['ids'][0]:
-                print(f"Article ID: {id}")
+                article = self.database.get_article_by_id(id)
+                retrieved_articles.append(article)
+                self.view.display_article(article)
+        
+        export = self.view.get_csv_export()
+        
+        if export:
+            self.csv.export_articles_to_csv(retrieved_articles)
 
         
 
