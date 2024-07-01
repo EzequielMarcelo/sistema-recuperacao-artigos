@@ -20,14 +20,17 @@ class UserController:
         self.view.display_message(message)
         
     def register_user(self):
-        cpf, name, age, email, cep, password = self.view.get_user_info()
-        address = CEP.get_address_by_cep(cep)
+        try: 
+            cpf, name, age, email, cep, password = self.view.get_user_info()
+            address = CEP.get_address_by_cep(cep)
         
-        if address is None:
-            address = self.view.get_user_address_manually(cep)
-        
-        user = User(cpf, name, age, email, address, password)
-        self.database.add_user(user)
+            if address is None:
+                address = self.view.get_user_address_manually(cep)
+            
+            user = User(cpf, name, age, email, address, password)
+            self.database.add_user(user)
+        except Exception as e:
+            print(f"Erro ao registrar usuario {e}")        
 
     def recover_password(self):
         email = self.view.get_info_recover_password()
