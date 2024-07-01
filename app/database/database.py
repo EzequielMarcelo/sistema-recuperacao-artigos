@@ -148,6 +148,17 @@ class Database:
 
         return [{'id': id, 'title': title, 'summary': summary, 'link': link, 'user_cpf': user_cpf, 'query': query} for (id, title, summary, link, user_cpf, query) in articles]
 
+    def get_all_summaries_by_cpf(self, cpf):
+        connection = sqlite3.connect(self.data_base_path)
+        cursor = connection.cursor()
+
+        cursor.execute('SELECT summary FROM Article WHERE user_cpf = ?', (cpf,))
+        summaries = cursor.fetchall()
+
+        connection.close()
+
+        return [summary[0] for summary in summaries]
+
 class ChromaDB:
     def __init__(self, storage_path):
         self.storage_path = storage_path

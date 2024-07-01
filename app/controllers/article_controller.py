@@ -43,6 +43,10 @@ class ArticleController:
         cpf = self.current_user.cpf
         query, max_results = self.view.get_search_parameters()
         collection = self.chromadb.connect_to_collection(cpf)
+
+        summaries_to_training = self.database.get_all_summaries_by_cpf(cpf)
+
+        self.chromadb.train_vectorizer(summaries_to_training)
         
         results = self.chromadb.search_documents(collection, query, max_results)
         
