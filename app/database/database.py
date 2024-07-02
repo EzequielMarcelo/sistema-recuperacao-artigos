@@ -2,7 +2,6 @@ import os
 import sqlite3
 from app.models.user_model import User
 import chromadb
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 class Database:
     def __init__(self, data_base_path):
@@ -148,23 +147,10 @@ class Database:
 
         return [{'id': id, 'title': title, 'summary': summary, 'link': link, 'user_cpf': user_cpf, 'query': query} for (id, title, summary, link, user_cpf, query) in articles]
 
-    def get_all_summaries_by_cpf(self, cpf):
-        connection = sqlite3.connect(self.data_base_path)
-        cursor = connection.cursor()
-
-        cursor.execute('SELECT summary FROM Article WHERE user_cpf = ?', (cpf,))
-        summaries = cursor.fetchall()
-
-        connection.close()
-
-        return [summary[0] for summary in summaries]
-
 class ChromaDB:
     def __init__(self, storage_path):
         self.storage_path = storage_path
         self.client = chromadb.PersistentClient(path=storage_path)
-        self.vectorizer_max_features = 200
-        self.vectorizer = TfidfVectorizer(max_features=self.vectorizer_max_features)
 
     def connect_to_collection(self, cpf):
         collection_name = f"colect_{cpf}"
@@ -174,26 +160,13 @@ class ChromaDB:
         except Exception as e:
             print(f"Error connecting to collection {collection_name}: {e}")       
             return None
-        
-    def train_vectorizer(self, documents):
-        self.vectorizer.fit(documents)
-        print(f"Vectorizer trained with {len(documents)} documents.")
 
     def index_document(self, collection, doc_id, summary):
         try:
-            if self.vectorizer is None:
-                raise ValueError("Vectorizer is not trained.")
-                
-            summary_vector = self.vectorizer.transform([summary])
-            embeddings = summary_vector.toarray().tolist()[0] 
-            if len(embeddings) < self.vectorizer_max_features:
-                embeddings.extend([0] * (self.vectorizer_max_features - len(embeddings)))
-            else:
-                embeddings = embeddings[:self.vectorizer_max_features]
-                
-            collection.upsert(
-                ids=[doc_id],
-                embeddings=[embeddings]
+            
+            collection.add(
+                documents=[summary],  
+                ids=[doc_id]  
             )
             print(f"Document '{doc_id}' successfully indexed in the collection.")
             return True
@@ -202,11 +175,9 @@ class ChromaDB:
             return False
 
     def search_documents(self, collection, query, max_results):
-        try:
-            query_vector = self.vectorizer.transform([query]).toarray().tolist()
-            
+        try:            
             results = collection.query(
-                query_embeddings=query_vector,
+                query_texts=[query],
                 n_results=max_results  
             )
             return results

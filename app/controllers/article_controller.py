@@ -30,10 +30,7 @@ class ArticleController:
         parsed_articles = Article.parse_arxiv_response(articles_xml)
         collection = self.chromadb.connect_to_collection(cpf)
         
-        if articles_xml and collection:
-            summaries = [article['summary'] for article in parsed_articles]
-            self.chromadb.train_vectorizer(summaries) 
-            
+        if articles_xml and collection:            
             for article in parsed_articles:
                 article_data = (article['id'], article['title'], article['summary'], article['link'], cpf, query)
                 self.database.add_article(article_data)
@@ -43,10 +40,6 @@ class ArticleController:
         cpf = self.current_user.cpf
         query, max_results = self.view.get_search_parameters()
         collection = self.chromadb.connect_to_collection(cpf)
-
-        summaries_to_training = self.database.get_all_summaries_by_cpf(cpf)
-
-        self.chromadb.train_vectorizer(summaries_to_training)
         
         results = self.chromadb.search_documents(collection, query, max_results)
         
